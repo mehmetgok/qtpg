@@ -11,17 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
     db = QSqlDatabase::addDatabase("QPSQL", "first");
     db.setHostName("localhost");
     db.setDatabaseName("rtpq");
-    db.setUserName("postgres");
-    db.setPassword("tr0561");
+    db.setUserName("postgres1");
+    db.setPassword("tr_0561");
     db.setPort(5432);
-
-
 
     // Connect from another window
     // QSqlDatabase defaultDB = QSqlDatabase::database("first");
-
-
-
 
 }
 
@@ -84,6 +79,12 @@ void MainWindow::on_pushButton_2_clicked()
                   qDebug("Value : %d", values[0]);
                   qDebug("Value : %d", values[1]);
                   qDebug("Value : %d", values[2]);
+
+                  QDateTime tmsp = query.value(2).toDateTime();
+
+                  QString dt = tmsp.toString("HH:mm:ss.z dd-MM-yyyy");
+
+                  qDebug(dt.toLatin1());
             }
 
         }
@@ -103,29 +104,26 @@ void MainWindow::on_pushButton_3_clicked()
 
     // qDebug("Sizeof: %d" ,sizeof(data));
 
-
     QSqlQuery sql(db);
 
-    QString query = "INSERT INTO pqd(type, raw_data) VALUES(:type,:raw_data)";
-
+    QString query = "INSERT INTO pqd(type, time, raw_data) VALUES(:type, :time, :raw_data)";
 
     sql.prepare(query);
 
     sql.bindValue(":raw_data", ba);
     sql.bindValue(":type", 1);
 
+    QDateTime now = QDateTime::currentDateTime();
+
+    sql.bindValue(":time", now);
+
 
      if( !sql.exec() ) {
+
          qDebug("Error while Insert");
-
-          qDebug() <<"Error = " << db.lastError().text();
-
+         qDebug() <<"Error = " << db.lastError().text();
 
      }
-
-
-
-
 
 
 
